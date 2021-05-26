@@ -1,0 +1,65 @@
+﻿@model List<Cinema.Web.Models.MovieModel>
+@{
+
+}
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="jumbotron text-center" style="display: flex; align-items: center; justify-content: center;">
+    <img src="~/Content/Media/logo.png" style="width: 100px;margin-right: 20px;" />
+    <h1>Cinema Store</h1>
+    @*<p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>*@
+
+</div>
+
+<div class="text-center">
+    @*<div class="m-3" style="left:0; position:relative;">
+            @Html.ActionLink("Add new Movie", "Create", "MovieModels", null, new { @class = "btn btn-success" })
+
+        </div>*@
+
+    <div>
+        @for (int i = 0; i < Model.Count; i++)
+        {
+            var item = Model[i];
+
+            if (i % 3 == 0)
+            {
+                @:<div class="row" style="display: flex; justify-content: center;margin-bottom:30px;">
+                }
+                <div class="col-md-3 m-4 text-center" style="display:flex; justify-content:center;">
+                    <div class="card" style="width: 18rem;height:35rem;">
+                        <img class="card-img-top" src="@item.Image" alt="Poster" style="height:70%" />
+
+                        <div class="card-body">
+                            <h5 class="card-title">@item.Name</h5>
+                        
+
+                            <p class="card-text">@item.Price $</p>
+                        </div>
+
+                        <div class="card-footer">
+                            <a href="#" class="btn btn-success">Buy Ticket</a>
+                            @Html.ActionLink("Edit", "Edit", "MovieModels", new { @id = @item.Id }, new { @class = "btn btn-secondary" })
+                           
+                        </div>
+                    </div>
+                </div>
+                if (i % 3 == 2)
+                {
+                @:</div>
+
+
+
+
+
+
+
+
+            }
+        }
+    </div>
+</div>
+

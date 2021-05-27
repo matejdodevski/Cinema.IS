@@ -1,5 +1,4 @@
-﻿using Cinema.Web.Models.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,8 +7,9 @@ namespace Cinema.Web.Models
 {
     public class ShoppingCart
     {
+        public int Id { get; set; }
         public string OwnerId { get; set; }
-        public CinemaApplicationUser Owner { get; set; }
-        public virtual ICollection<MovieShoppingCart> MoviesInShoppingCart { get; set; }
+        public ApplicationUser Owner { get; set; }
+        public virtual ICollection<TicketModel> TicketsInShoppingCart { get; set; }
     }
 }

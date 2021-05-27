@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Cinema.Web.Models;
+using Cinema.Web.Services;
 
 namespace Cinema.Web.Controllers
 {
@@ -17,7 +18,7 @@ namespace Cinema.Web.Controllers
     {
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
-
+        private MovieService _movieService = new MovieService();
         public AccountController()
         {
         }
@@ -79,7 +80,15 @@ namespace Cinema.Web.Controllers
             switch (result)
             {
                 case SignInStatus.Success:
-                    return RedirectToLocal(returnUrl);
+                    {
+                        var userId = _movieService.GetUserIdByEmail(model.Email);
+                        var cartId = _movieService.GetCartIdByUserId(userId);
+                        Session["cart_id"] = cartId;
+                        Session["user_id"] = userId;
+                        Session["is_logged_in"] = true;
+
+                        return RedirectToLocal(returnUrl);
+                    }
                 case SignInStatus.LockedOut:
                     return View("Lockout");
                 case SignInStatus.RequiresVerification:
@@ -153,10 +162,15 @@ namespace Cinema.Web.Controllers
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email};
                 var result = await UserManager.CreateAsync(user, model.Password);
+                _movieService.CreateShoppingCart(user.Id);
+                //var cart = new ShoppingCart { OwnerId = user.Id, Owner = user };
+                        
+                
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
+                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+                    Session["user_id"] = user.Id;
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -392,7 +406,11 @@ namespace Cinema.Web.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "MovieModels");
+            Session["cart_id"] = null;
+            Session["user_id"] = null;
+            Session["is_logged_in"] = null;
+            return RedirectToAction("Login", "Account");
+
         }
 
         //

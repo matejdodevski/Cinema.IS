@@ -11,12 +11,15 @@ namespace Cinema.Web.Models
         public int Price { get; set; }
         public int MovieId { get; set; }
         public DateTime DateOfReservation { get; set; }
+        public int? ShoppingCartId {get; set;}
+        public virtual ShoppingCart ShoppingCart { get; set; }
+        public virtual MovieModel Movie { get; set; }
+        public int NumberOfTickets { get; set; }
     }
 
   
     public class UserBalance
     {
-
         public int Id { get; set; }
         public int UserId { get; set; }
         public int Balance { get; set; }

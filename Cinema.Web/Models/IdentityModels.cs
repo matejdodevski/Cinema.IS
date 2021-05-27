@@ -1,7 +1,6 @@
 ﻿using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Cinema.Web.Models.Identity;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 
@@ -20,7 +19,7 @@ namespace Cinema.Web.Models
         }
     }
 
-    public class ApplicationDbContext : IdentityDbContext<CinemaApplicationUser>
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext()
             : base("DefaultConnection", throwIfV1Schema: false)
@@ -33,11 +32,16 @@ namespace Cinema.Web.Models
         {
             return new ApplicationDbContext();
         }
+        
+
 
         public System.Data.Entity.DbSet<Cinema.Web.Models.MovieModel> MovieModels { get; set; }
 
         public System.Data.Entity.DbSet<Cinema.Web.Models.TicketModel> TicketModels { get; set; }
 
         public System.Data.Entity.DbSet<Cinema.Web.Models.GenreModel> GenreModels { get; set; }
+
+        public System.Data.Entity.DbSet<Cinema.Web.Models.ShoppingCart> ShoppingCarts { get; set; }
+
     }
 }

@@ -1,10 +1,11 @@
 ﻿@model List<Cinema.Web.Models.MovieModel>
-@{
 
-}
 @{
     ViewBag.Title = "Index";
     Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@{
+    var data = ViewBag.Movies;
 }
 
 <div class="jumbotron text-center" style="display: flex; align-items: center; justify-content: center;">
@@ -25,31 +26,40 @@
         {
             var item = Model[i];
 
-            if (i % 3 == 0)
+            if (i % 4 == 0)
             {
-                @:<div class="row" style="display: flex; justify-content: center;margin-bottom:30px;">
+                @:<div class="row" style="display: flex; justify-content: center;margin-bottom:60px;">
                 }
-                <div class="col-md-3 m-4 text-center" style="display:flex; justify-content:center;">
+                <div class="col-md-3 m-4 text-center" style="display:flex; justify-content:center; ">
                     <div class="card" style="width: 18rem;height:35rem;">
                         <img class="card-img-top" src="@item.Image" alt="Poster" style="height:70%" />
 
                         <div class="card-body">
+
                             <h5 class="card-title">@item.Name</h5>
-                        
+                            <h6>@data[i].genre.Name</h6>
 
                             <p class="card-text">@item.Price $</p>
                         </div>
 
                         <div class="card-footer">
-                            <a href="#" class="btn btn-success">Buy Ticket</a>
+                            @Html.ActionLink("Buy Ticket", "AddTicketToShoppingCart", "MovieModels", new { @id = @item.Id }, new { @class = "btn btn-success" })
                             @Html.ActionLink("Edit", "Edit", "MovieModels", new { @id = @item.Id }, new { @class = "btn btn-secondary" })
-                           
+
                         </div>
                     </div>
                 </div>
-                if (i % 3 == 2)
+                if (i % 4 == 3)
                 {
                 @:</div>
+
+
+
+
+
+
+
+
 
 
 

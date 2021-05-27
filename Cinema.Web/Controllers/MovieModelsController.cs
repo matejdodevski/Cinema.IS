@@ -7,16 +7,20 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Cinema.Web.Models;
+using Cinema.Web.Services;
 
 namespace Cinema.Web.Controllers
 {
     public class MovieModelsController : Controller
     {
         private ApplicationDbContext db = new ApplicationDbContext();
+        private MovieService moviesService = new MovieService();
 
         // GET: MovieModels
         public ActionResult Index()
         {
+            var movies = moviesService.GetAllMovies();
+            ViewBag.Movies = movies;
             return View(db.MovieModels.ToList());
         }
 
@@ -34,6 +38,107 @@ namespace Cinema.Web.Controllers
             }
             return View(movieModel);
         }
+
+        public ActionResult AddTicketToShoppingCart(int id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            ShoppingCart shoppingModel = null;
+            if (Session["user_id"] != null)
+            {
+               shoppingModel = moviesService.AddTicketToShoppingCart(id, Session["user_id"].ToString());
+
+            }
+            
+            
+            if (shoppingModel == null)
+            {
+                Response.Redirect("/Account/Login", true);
+                return new EmptyResult();
+            }
+            else
+            {
+                Response.Redirect("/MovieModels/ShoppingCart/" + Session["cart_id"].ToString(), true);
+                return new EmptyResult();
+            }
+            
+        }
+
+        public ActionResult ShoppingCart()
+        {
+            try
+            {
+                var shoppingCart = db.ShoppingCarts.Find((int)Session["cart_id"]);
+                return View(shoppingCart);
+            }
+            catch (Exception ex)
+            {
+
+                Response.Redirect("/Account/Login");
+                return new EmptyResult();
+            }
+        }
+
+        public ActionResult IncrementTicket(int ticketId)
+        {
+            try
+            {
+                var shoppingCart = db.ShoppingCarts.Find((int)Session["cart_id"]);
+
+                moviesService.IncrementTicket(ticketId);
+                Response.Redirect("/MovieModels/ShoppingCart/" + Session["cart_id"].ToString(), true);
+                return new EmptyResult();
+
+            }
+            catch (Exception ex)
+            {
+
+                Response.Redirect("/Account/Login");
+                return new EmptyResult();
+            }
+        }
+
+        public ActionResult DecrementTicket(int ticketId)
+        {
+            try
+            {
+                var shoppingCart = db.ShoppingCarts.Find((int)Session["cart_id"]);
+
+                moviesService.DecrementTicket(ticketId);
+                Response.Redirect("/MovieModels/ShoppingCart/" + Session["cart_id"].ToString(), true);
+                return new EmptyResult();
+            }
+            catch (Exception ex)
+            {
+
+                Response.Redirect("/Account/Login");
+                return new EmptyResult();
+            }
+        }
+
+        public ActionResult RemoveTicket(int ticketId)
+        {
+            try
+            {
+                var shoppingCart = db.ShoppingCarts.Find((int)Session["cart_id"]);
+
+                moviesService.DeleteTicket(ticketId);
+                Response.Redirect("/MovieModels/ShoppingCart/" + Session["cart_id"].ToString(), true);
+                return new EmptyResult();
+            }
+            catch (Exception ex)
+            {
+
+                Response.Redirect("/Account/Login");
+                return new EmptyResult();
+            }
+        }
+
+
+
+
 
         // GET: MovieModels/Create
         public ActionResult Create()

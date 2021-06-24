@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using Cinema.Web.Models;
 using Cinema.Web.Services;
+using Cinema.Web.Enums;
 
 namespace Cinema.Web.Controllers
 {
@@ -83,6 +84,8 @@ namespace Cinema.Web.Controllers
                     {
                         var userId = _movieService.GetUserIdByEmail(model.Email);
                         var cartId = _movieService.GetCartIdByUserId(userId);
+                        var roleId = _movieService.GetRoleForUserId(userId);
+                        Session["role_id"] = roleId;
                         Session["cart_id"] = cartId;
                         Session["user_id"] = userId;
                         Session["is_logged_in"] = true;
@@ -168,9 +171,14 @@ namespace Cinema.Web.Controllers
                 
                 if (result.Succeeded)
                 {
-                    
+                    _movieService.AddUserRoleToUser(user.Id, (int)RoleEnum.User);
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     Session["user_id"] = user.Id;
+                    Session["is_logged_in"] = true;
+                    var cartId = _movieService.GetCartIdByUserId(user.Id);
+                    Session["cart_id"] = cartId;
+                    var roleId = _movieService.GetRoleForUserId(user.Id);
+                    Session["role_id"] = roleId;
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
@@ -469,6 +477,8 @@ namespace Cinema.Web.Controllers
             }
             return RedirectToAction("Index", "MovieModels");
         }
+
+     
 
         internal class ChallengeResult : HttpUnauthorizedResult
         {

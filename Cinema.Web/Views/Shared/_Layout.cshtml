@@ -1,5 +1,6 @@
 ﻿@{
     var cartId = Session["cart_id"];
+    var userId = Session["user_id"];
 }
 <!DOCTYPE html>
 <html>
@@ -28,7 +29,8 @@
                 <div class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
                         @*<li>@Html.ActionLink("Home", "Index", "MovieModels")</li>*@
-                        <li><a href="/MovieModels/ShoppingCart/@cartId"> <i class="fas fa-shopping-cart"></i> </a></li>
+                        <li><a href="/MovieModels/ShoppingCart/@cartId"> <i class="fas fa-shopping-cart"></i> Shopping Cart</a></li>
+                        <li><a href="/MovieModels/Tickets/@userId"> <i class="fas fa-ticket-alt"> </i> My Tickets</a></li>
                         <li>@Html.ActionLink("About", "About", "Home")</li>
                         @*<li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
                     </ul>

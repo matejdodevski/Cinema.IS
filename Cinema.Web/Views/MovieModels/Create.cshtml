@@ -1,19 +1,24 @@
 ﻿@model Cinema.Web.Models.MovieModel
 
 @{
+
     ViewBag.Title = "Create";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var genres = ViewBag.Genres;
+    var listItems = ViewBag.ListItems;
+  
 }
 
-<h2>Create</h2>
+<h2>Add New Movie</h2>
 
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
-    @Html.AntiForgeryToken()
-    
+@Html.AntiForgeryToken()
+
 <div class="form-horizontal">
-    <h4>MovieModel</h4>
+
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
@@ -24,13 +29,7 @@
         </div>
     </div>
 
-    <div class="form-group">
-        @Html.LabelFor(model => model.GenreId, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.GenreId, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.GenreId, "", new { @class = "text-danger" })
-        </div>
-    </div>
+
 
     <div class="form-group">
         @Html.LabelFor(model => model.Image, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -45,6 +44,18 @@
         <div class="col-md-10">
             @Html.EditorFor(model => model.Price, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.Price, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    <div class="form-group form-select">
+        @Html.LabelFor(model => model.GenreId, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.DropDownListFor(model =>
+    model.GenreId,
+    new SelectList(listItems, "Value", "Text"),
+    "-- Select Genre --", htmlAttributes: new { @class = "form-select" }
+)
+            @Html.ValidationMessageFor(model => model.GenreId, "", new { @class = "text-danger" })
         </div>
     </div>
 

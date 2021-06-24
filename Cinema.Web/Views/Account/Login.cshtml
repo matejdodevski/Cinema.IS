@@ -3,15 +3,23 @@
 @{
     ViewBag.Title = "Log in";
 }
-
+<div style="display:flex; justify-content: left;align-items:center;">
+    <img src="~/Media/bg.jpg" style="width: 130px;margin-right: 20px;" />
+    <h1>Cinema Store</h1>
+</div>
+<br /><br />
 <h2>@ViewBag.Title.</h2>
-<div class="row">
+<p style="        width: fit-content;
+        height: fit-content;
+        padding: 10px;
+        background-color: #e8e8e8;">Admin account: qwe@gmail.com <br />Password: TESTt123$<br /> За обичен User регистрирајте се на линкот доле :)   </p>
+<div class="row" >
     <div class="col-md-8">
         <section id="loginForm">
             @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "form-horizontal", role = "form" }))
             {
                 @Html.AntiForgeryToken()
-                <h4>Use a local account to log in.</h4>
+
                 <hr />
                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                 <div class="form-group">
@@ -51,11 +59,8 @@
             }
         </section>
     </div>
-    <div class="col-md-4">
-        <section id="socialLoginForm">
-            @Html.Partial("_ExternalLoginsListPartial", new ExternalLoginListViewModel { ReturnUrl = ViewBag.ReturnUrl })
-        </section>
-    </div>
+   
+
 </div>
 
 @section Scripts {

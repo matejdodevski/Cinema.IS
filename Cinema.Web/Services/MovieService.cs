@@ -3,6 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Net.Mail;
+using System.Web.Mvc;
+using Syncfusion.Pdf;
+using Syncfusion.Pdf.Graphics;
+using Syncfusion.Drawing;
+using System.IO;
+using Syncfusion.Pdf.Grid;
 
 namespace Cinema.Web.Services
 {
@@ -27,6 +34,25 @@ namespace Cinema.Web.Services
             }
         }
 
+        public List<GenreModel> GetAllGenres()
+        {
+            try
+            {
+                var query = from genres in db.GenreModels
+                                  select genres;
+                var genreList = query.ToList();
+
+                return genreList;
+            }
+            catch (Exception ex)
+            {
+
+                return null;
+            }
+        }
+
+
+
         public bool CreateShoppingCart(string ownerId)
         {
             try
@@ -37,7 +63,7 @@ namespace Cinema.Web.Services
                 ShoppingCart shoppingCart = new ShoppingCart { OwnerId = ownerId, Owner = user };
                 db.ShoppingCarts.Add(shoppingCart);
                 db.SaveChanges();
-                db.Dispose();
+           
                 return true;
             }
             catch (Exception ex)
@@ -156,7 +182,9 @@ namespace Cinema.Web.Services
         public TicketModel CheckIfTicketExistsInShoppingCart(int movieId, int shoppingCartId)
         {
             var query = from ticket in db.TicketModels
-                        where ticket.MovieId == movieId && ticket.ShoppingCartId == shoppingCartId
+                        where ticket.MovieId == movieId 
+                        && ticket.ShoppingCartId == shoppingCartId
+                        && ticket.Payed == false
                         select ticket;
             var ticketResult = query.FirstOrDefault();
 
@@ -166,6 +194,64 @@ namespace Cinema.Web.Services
             }
             return ticketResult;
         }
+
+        public bool PayForTickets(int cartId)
+        {
+
+            try
+            {
+                var cart = db.ShoppingCarts.Find(cartId);
+
+                var tickets = cart.TicketsInShoppingCart;
+
+                var emailTo = db.Users.Find(cart.OwnerId).Email;
+                
+                foreach(var item in tickets)
+                {
+                    item.Payed = true;
+                }
+                db.SaveChanges();
+
+                MailMessage mail = new MailMessage();
+                mail.To.Add(emailTo);
+                mail.From = new MailAddress("matej.ddd@gmail.com");
+                mail.Subject = "Confirmation for your order on Cinema Store";
+                string Body = "You have successfully payed for the order of your tickets! Thank you!";
+                mail.Body = Body;
+                mail.IsBodyHtml = true;
+                SmtpClient smtp = new SmtpClient();
+                smtp.Host = "smtp.gmail.com";
+                smtp.Port = 587;
+                smtp.UseDefaultCredentials = false;
+                smtp.Credentials = new System.Net.NetworkCredential("matej.ddd@gmail.com", "Matejdode00+");
+                smtp.EnableSsl = true;
+                smtp.Send(mail);
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+                throw;
+            }
+        }
+
+        public IEnumerable<TicketModel> GetAllPayedTicketsForUser(string userId)
+        {
+            var query = from ticket in db.TicketModels
+                        join cart in db.ShoppingCarts
+                        on ticket.ShoppingCartId equals cart.Id
+                        where cart.OwnerId == userId && ticket.Payed == true
+                        select ticket;
+
+            var res = query.ToList();
+
+            return res;
+
+        }
+
+    
+
 
         public ShoppingCart AddTicketToShoppingCart(int movieId,string userId)
         {
@@ -191,7 +277,8 @@ namespace Cinema.Web.Services
                         ShoppingCartId = shoppingCart.Id,
                         ShoppingCart = shoppingCart,
                         Movie = movie,
-                        NumberOfTickets = 1
+                        NumberOfTickets = 1,
+                        Payed = false
                     };
                     db.TicketModels.Add(ticketModel);
                     db.ShoppingCarts.Find(shoppingCart.Id).TicketsInShoppingCart.Add(ticketModel);
@@ -226,6 +313,53 @@ namespace Cinema.Web.Services
                         select cart;
             return query.FirstOrDefault().Id;
                         
+        }
+
+        public bool AddUserRoleToUser(string userId, int roleId)
+        {
+            try
+            {
+                var userRole = new UserRoles
+                {
+                    UserId = userId,
+                    RoleId = roleId
+                };
+
+                db.UserRoles.Add(userRole);
+                db.SaveChanges();
+                db.Dispose();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public int GetRoleForUserId(string userId)
+        {
+            var query = from role in db.UserRoles
+                        where role.UserId == userId
+                        select role;
+            return query.FirstOrDefault().RoleId;
+        }
+
+        public List<TicketModel> GetAllTicketsForGenreId(int genreId)
+        {
+            try
+            {
+                var query = from tickets in db.TicketModels
+                            join movies in db.MovieModels
+                            on tickets.MovieId equals movies.Id
+                            where movies.GenreId == genreId
+                            select tickets;
+                return query.ToList();
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
     }

@@ -43,5 +43,7 @@ namespace Cinema.Web.Models
 
         public System.Data.Entity.DbSet<Cinema.Web.Models.ShoppingCart> ShoppingCarts { get; set; }
 
+        public System.Data.Entity.DbSet<Cinema.Web.Models.UserRoles> UserRoles { get; set; }
+
     }
 }

@@ -31,29 +31,29 @@
             </span>
 
 
-            <span>
+            @*<span>
                 @Html.ActionLink("Import Users From Excel", "Create", "MovieModels"
           , new { @class = "btn btn-success btn-lg" })
-            </span>
+            </span>*@
 
 
         </div>
-        <div style="display:flex;justify-content:center;margin-bottom:20px;">
+        <!--<div style="display:flex;justify-content:center;margin-bottom:20px;">-->
 
-            <div>
+            @*<div>
                 @Html.DropDownListFor(genreId,
         new SelectList(listItems, "Value", "Text"),
         "-- Select Genre --", new { @id = @genreId }
     )
 
-            </div>
+            </div>*@
 
-            <span style="margin-right:20px;">
+            <!--<span style="margin-right:20px;">
                 @Html.ActionLink("Generate Report For All Tickets", "Export All", "MovieModels"
           , new { @class = "btn btn-success btn-lg" })
             </span>
 
-        </div>
+        </div>-->
     </div>
 
 }

@@ -327,7 +327,7 @@ namespace Cinema.Web.Services
 
                 db.UserRoles.Add(userRole);
                 db.SaveChanges();
-                db.Dispose();
+    
 
                 return true;
             }
